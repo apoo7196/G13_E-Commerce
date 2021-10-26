@@ -1,0 +1,123 @@
+#%RAML 1.0
+title: G13
+
+version: v1
+protocols: 
+- HTTP
+
+traits:
+  credentials: !include /trait/trait.raml
+
+/users:
+  is: [credentials]
+  post:
+    description: creates a user account
+    body:
+      application/json:
+        examples:
+          input: !include /inputs/user_input.raml
+    responses:
+      201:
+        body:
+          application/json:
+            examples:
+              output: !include /output/record_added.raml
+
+  /{username}:
+    is: [credentials]
+    put:
+      description: updated a user account
+      body:
+        application/json:
+          examples:
+            input: !include /inputs/user_input.raml
+      responses:
+        200:
+          body:
+            application/json:
+              examples:
+               output: !include /output/record_updated.raml
+    delete:
+      description: deletes a user account
+      responses:
+        200:
+          body:
+            application/json:
+              examples:
+                output: !include /output/record_deleted.raml
+        
+/orders:
+  is: [credentials]
+  post:
+    description: creates an order
+    body:
+      application/json:
+        examples:
+          input: !include /inputs/order_input.raml
+    responses:
+      201:
+        body:
+          application/json:
+            examples:
+              output: !include /output/record_added.raml
+
+  /{orderId}:
+    get:
+      description: retrives order information
+      responses:
+        200:
+          body:
+            application/json:
+              examples:
+                output: !include /inputs/order_input.raml
+
+    put:
+      description: updates a order
+      body:
+        application/json:
+          examples:
+            input: !include /inputs/order_input.raml
+      responses:
+        200:
+          body:
+            application/json:
+              examples:
+                output: !include /output/record_updated.raml
+
+
+/payment:
+  is: [credentials]
+  post:
+    description: Mock API for payment
+    responses:
+      200:
+        body:
+          application/json:
+            examples:
+              output: !include /output/payment.raml
+              
+              
+/wishlist:
+  is: [credentials]
+  post:
+    description: wishlist a product
+    body:
+      application/json:
+        examples:
+          input: !include /inputs/wishlist_input.raml
+    responses:
+      200:
+        body:
+          application/json:
+            examples:
+              output: !include /output/record_added.raml
+
+          
+          
+               
+
+      
+
+    
+  
+

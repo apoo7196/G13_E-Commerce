@@ -1,0 +1,15 @@
+#%RAML 1.0 Trait
+
+headers:
+  client_id: 
+    type: string
+    required: true
+  client_secret:
+    type: string
+    required: true
+
+responses:
+  401:
+    description: Unauthorized or Invalid credentials
+  500:
+    description: Internal Server error

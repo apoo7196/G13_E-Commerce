@@ -1,0 +1,11 @@
+smtp:
+  host: "smtp.gmail.com"
+  port: "587"
+  user: "nikithashetty1234@gmail.com"
+  
+db:
+  host: "sql6.freesqldatabase.com"
+  port: "3306"
+  user: "sql6445825"
+  password: "xR59gF4QFP"
+  database: "sql6445825"

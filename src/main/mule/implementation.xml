@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:email="http://www.mulesoft.org/schema/mule/email" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd">
+	
+	
+	<sub-flow name="SetOrderId" doc:id="ff013fa4-357e-4af0-9a2d-12dc00e48094">
+		<set-variable value="#[payload.orderId]" doc:name="Set Variable" doc:id="b4103038-2521-4860-b6f0-0247b2330ffe" variableName="orderId" />
+	</sub-flow>
+	<sub-flow name="POSTResponse" doc:id="1ace741b-52c0-49fc-8652-b20f248408c5" >
+		<set-payload value='#[output application/json --- {"message":"Record added successfully"}]' doc:name="Response" doc:id="b7b48343-ac8e-4d49-9d3d-586598905edb" />
+	</sub-flow>
+	<sub-flow name="PUTResponse" doc:id="8decd06c-52a8-4cee-b2b1-78fec7e70799" >
+		<set-payload value='#[output application/json --- {"message":"Record updated successfully"}]' doc:name="Response" doc:id="20e45a55-9b1d-4310-9811-9057b7ed3f03" />
+	</sub-flow>
+	<sub-flow name="CreateOrder" doc:id="359a5824-1a0b-4193-9d54-e0f379e76bf2" >
+		<ee:transform doc:name="Transform Message" doc:id="c3b9b501-79ff-4397-8f67-044e80c11df8" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<flow-ref doc:name="SetOrderId" doc:id="aafd77b4-51a5-4649-bee7-719a737ef5e1" name="SetOrderId"/>
+		<foreach doc:name="For Each" doc:id="574aa79a-db51-456e-973b-c99f8e47d7dc" collection="#[payload.items]">
+			<db:insert doc:name="Insert" doc:id="69f2d727-849f-41f6-b568-711f8af5b75b" config-ref="Database_Config1">
+			<db:sql><![CDATA[insert INTO orders (orderId, itemName, price, quantity) 
+values (:orderId,:itemName,:price,:quantity);]]></db:sql>
+			<db:input-parameters><![CDATA[#[{orderId :vars.orderId,
+itemName :payload.itemName,
+price :payload.price,
+quantity :payload.quantity
+}]]]></db:input-parameters>
+		</db:insert>
+		</foreach>
+		<flow-ref doc:name="SetResponse" doc:id="0ef3bce5-7aec-4c5e-a04c-e8cd37561a7a" name="POSTResponse"/>
+	</sub-flow>
+	<sub-flow name="UpdateOrder" doc:id="d5342312-8b4c-4858-93d4-9df54edb067f" >
+		<ee:transform doc:name="Transform Message" doc:id="92451f3f-68c9-4726-b5f1-1497b641b1bb">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<flow-ref doc:name="SetOrderId" doc:id="63cd73c3-d9d7-4a49-a6da-40fe14eb4e6a" name="SetOrderId"/>
+		<foreach doc:name="For Each" doc:id="5a7da9bc-aead-473b-a639-99d930009c7f" collection="#[payload.items]">
+			<db:update doc:name="Update" doc:id="e1d45496-fcf2-4222-a2a4-307feae8c79f" config-ref="Database_Config1">
+			<db:sql><![CDATA[update orders set itemName= :itemName, price= :price, 
+quantity= :quantity where orderId= :orderId;]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+orderId :vars.orderId,
+itemName :payload.itemName,
+price :payload.price,
+quantity :payload.quantity
+}]]]></db:input-parameters>
+		</db:update>
+		</foreach>
+	</sub-flow>
+	<sub-flow name="GetOrder" doc:id="b86b82f3-ec1b-4f3f-9a39-3050b49a03d0" >
+		<db:select doc:name="Select" doc:id="b534b168-4f6c-45c0-b348-7208d00e2404" config-ref="Database_Config1">
+			<db:sql><![CDATA[select * from orders where orderId= :orderId;]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	orderId:attributes.uriParams.orderId
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="94572df2-7459-48b2-b4fa-79020764d901">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+	<sub-flow name="CreateUser" doc:id="39be79a1-27fa-41e0-afb5-d510ff8fa6cb" >
+		<db:insert doc:name="Insert" doc:id="eb5ade1f-fb62-4c05-a797-15088ef3a3f8" config-ref="Database_Config1">
+			<db:sql><![CDATA[insert INTO users (firstName, lastName, email, contact, username) 
+values (:firstName, :lastName, :email, :contact, :username);]]></db:sql>
+			<db:input-parameters><![CDATA[#[{firstName :payload.firstName,
+lastName :payload.lastName,
+email :payload.email,
+contact :payload.contact,
+username :payload.username
+	
+	
+}]]]></db:input-parameters>
+		</db:insert>
+	</sub-flow>
+	<sub-flow name="UpdateUser" doc:id="edcd4bbb-a42f-44b4-a50e-acb75f0b7d49" >
+		<db:update doc:name="Update" doc:id="f37aca9f-7c4d-4f33-adf7-34df3679f53d" config-ref="Database_Config1">
+			<db:sql><![CDATA[update users set firstName= :firstName, lastName= :lastName, email= :email,
+contact= :contact where username= :username]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	firstName:payload.firstName,
+	lastName:payload.lastName,
+	email:payload.email,
+	contact:payload.contact,
+	username:payload.username,
+}]]]></db:input-parameters>
+		</db:update>
+	</sub-flow>
+	<flow name="GetUser" doc:id="4e761a72-f503-4ca9-a846-47ec00995081" >
+		<http:listener doc:name="Listener" doc:id="2c148516-dd9f-4cab-b3e8-510ee3105781" config-ref="g13-httpListenerConfig" path="/users/{username}" allowedMethods="GET"/>
+		<db:select doc:name="Select" doc:id="c7e06888-7636-4d72-968e-ae6abc3daba7" config-ref="Database_Config1">
+			<db:sql><![CDATA[select * from users where username= :username;]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	username: attributes.uriParams.username
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="4982d1b3-68b5-44c3-a1da-349bcfd5cb5d">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<sub-flow name="DeleteUser" doc:id="83d70db4-fc52-4c48-ab3c-9ed9725c2c3c" >
+		<db:delete doc:name="Delete" doc:id="2bea85b3-1c2e-499f-8715-d565d8622715" config-ref="Database_Config1">
+			<db:sql ><![CDATA[Delete from users where username=:username]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	username: attributes.uriParams.username
+}]]]></db:input-parameters>
+		</db:delete>
+		<set-payload value='#[output application/json --- {"message": "Record deleted successfully"}]' doc:name="Response" doc:id="49b24c01-7cd2-43d7-ac2b-80087560d60a" />
+	</sub-flow>
+	<sub-flow name="CreateWishlist" doc:id="5326cfcb-4567-4814-81b4-19e6184d23e0" >
+		<ee:transform doc:name="Transform Message" doc:id="e09837ed-b696-46eb-97d2-1b46ef3f9883">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<db:insert doc:name="Insert" doc:id="6ff8a7cf-6f1a-498c-9ac4-8e44e2e978b0" config-ref="Database_Config1">
+			<db:sql><![CDATA[insert INTO wishlist (productName, price, discount, availableQuantity, size, username) 
+values (:productName, :price, :discount, :availableQuantity, :size, :username);]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	productName: payload.productName,
+	price: payload.price,
+	discount: payload.discount,
+	availableQuantity: payload.availableQuantity,
+	size: payload.size,
+	username: payload.username
+}]]]></db:input-parameters>
+		</db:insert>
+	</sub-flow>
+</mule>

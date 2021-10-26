@@ -1,0 +1,15 @@
+{
+  "orderId": "123",
+  "items":[
+    {
+      "itemName":"dummy1",
+      "price":789,
+      "quantity":12
+    },
+    {
+      "itemName":"dummy2",
+      "price":899,
+      "quantity":15
+    }
+  ]
+}

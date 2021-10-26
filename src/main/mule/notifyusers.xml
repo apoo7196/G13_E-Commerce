@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:email="http://www.mulesoft.org/schema/mule/email"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd 
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<flow name="EventAPI" doc:id="d886065c-4f47-483a-8a69-57afc37bffa0" initialState="stopped">
+		<scheduler doc:name="Scheduler" doc:id="e9b292b2-c289-4931-9856-0220daed50b2" >
+			<scheduling-strategy >
+				<fixed-frequency frequency="10" timeUnit="SECONDS"/>
+			</scheduling-strategy>
+		</scheduler>
+		<db:select doc:name="Select" doc:id="704983ae-5f86-4f0f-95ca-fbb129e8526b" config-ref="Database_Config1">
+			<db:sql ><![CDATA[select wishlist.* from wishlist, inventory where 
+wishlist.productName=inventory.productName AND wishlist.price!=inventory.price;
+
+
+]]></db:sql>
+		</db:select>
+		<logger level="INFO" doc:name="Logger" doc:id="57d8937f-d456-4b3e-8693-def9650b8268" />
+		<choice doc:name="Choice" doc:id="d6ab1b3e-4480-4425-9df2-f6921dcb730b" >
+			<when expression="#[sizeOf(payload)&gt;0]">
+				<email:send doc:name="Send" doc:id="55a407ce-d757-4459-a581-5181b319d7a6" config-ref="Email_SMTP" fromAddress="nikithashetty1234@gmail.com" subject="g13_ecommerce notification">
+					<email:to-addresses >
+						<email:to-address value="#[payload.email]" />
+					</email:to-addresses>
+					<email:cc-addresses >
+						<email:cc-address value="apoorvakamerkar7@gmail.com" />
+					</email:cc-addresses>
+					<email:body >
+						<email:content ><![CDATA[#["Hello " ++ payload.username ++ "Product " ++ payload.productName ++ "is now available at " ++ payload.price ++ "quantity(" ++ payload.availableQuantity ++ ")"]]]></email:content>
+					</email:body>
+				</email:send>
+			
+</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="c004efc0-02e0-4023-aec1-0d9b8338aca6" />
+			</otherwise>
+		</choice>
+	
+</flow>
+	
+	</mule>
