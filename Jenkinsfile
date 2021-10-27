@@ -27,7 +27,7 @@ pipeline {
         APP_NAME = 'sandbox-g13ecommerce-AK'
       }
       steps {
-            bat 'mvn deploy -DmuleDeploy -Dmule.version="%MULE_VERSION%" -Danypoint.username="%DEPLOY_CREDS_USR%" -Danypoint.password="%DEPLOY_CREDS_PSW%" -Dcloudhub.app="%APP_NAME%" -Dcloudhub.environment="%ENVIRONMENT%" -Dcloudhub.bg="%BG%" -Dcloudhub.worker="%WORKER%"'
+            bat 'mvn deploy -DmuleDeploy -Dmule.version="4.3.0" -Danypoint.username="apoorva1234" -Danypoint.password="Apoorva@0701" -Dcloudhub.app="sandbox-g13ecommerce-AK" -Dcloudhub.environment="Sandbox" -Dcloudhub.bg="Apisero%" -Dcloudhub.worker="Micro"'
       }
     }
     
