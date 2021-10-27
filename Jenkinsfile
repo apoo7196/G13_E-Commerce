@@ -5,7 +5,7 @@ pipeline {
     //adding a comment for the commit test
     DEPLOY_CREDS = credentials('deploy-anypoint-user')
     MULE_VERSION = '4.3.0'
-    BG = "Apisero Sandbox"
+    BG = "Apisero"
     WORKER = "Micro"
   }
   stages {

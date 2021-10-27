@@ -31,15 +31,15 @@
 				<extensions>true</extensions>
 				<configuration>
 					<cloudHubDeployment>
-						<uri>https://anypoint.mulesoft.com/accounts/login/apiseroinc</uri>
+						<uri>https://anypoint.mulesoft.com</uri>
 						<muleVersion>4.3.0</muleVersion>
 						<!-- Deploy User Parameter -->
-						<username>apoorva.c.kamerkar@apisero.com</username>
-						<password>Suchita@1</password>
+						<username>apoorva1234</username>
+						<password>Apoorva@0701</password>
 						<!-- Environment Parameter -->
 						<environment>Sandbox</environment>
 						<applicationName>g13_ecommerce</applicationName>
-						<businessGroup>Apisero Sandbox</businessGroup>
+						<businessGroup>Apisero</businessGroup>
 						<workerType>Micro</workerType>
 						<objectStoreV2>true</objectStoreV2>
 					</cloudHubDeployment>
