@@ -38,7 +38,7 @@
 						<password>Apoorva@0701</password>
 						<!-- Environment Parameter -->
 						<environment>Sandbox</environment>
-						<applicationName>g13_ecommerce</applicationName>
+						<applicationName>g13ecommerce</applicationName>
 						<businessGroup>Apisero</businessGroup>
 						<workerType>Micro</workerType>
 						<objectStoreV2>true</objectStoreV2>
