@@ -31,7 +31,7 @@
 				<extensions>true</extensions>
 				<configuration>
 					<cloudHubDeployment>
-						<uri>https://anypoint.mulesoft.com</uri>
+						<uri>https://anypoint.mulesoft.com/accounts/login/apiseroinc</uri>
 						<muleVersion>4.3.0</muleVersion>
 						<!-- Deploy User Parameter -->
 						<username>apoorva.c.kamerkar@apisero.com</username>
