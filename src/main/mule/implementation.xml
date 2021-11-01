@@ -10,7 +10,7 @@ http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/em
 	
 	
 	<sub-flow name="SetOrderId" doc:id="ff013fa4-357e-4af0-9a2d-12dc00e48094">
-		<set-variable value="#[payload.orderId]" doc:name="Set Variable" doc:id="b4103038-2521-4860-b6f0-0247b2330ffe" variableName="orderId" />
+		<set-variable value="#[vars.payload.orderId]" doc:name="Set Variable" doc:id="b4103038-2521-4860-b6f0-0247b2330ffe" variableName="orderId" />
 	</sub-flow>
 	<sub-flow name="POSTResponse" doc:id="1ace741b-52c0-49fc-8652-b20f248408c5" >
 		<set-payload value='#[output application/json --- {"message":"Record added successfully"}]' doc:name="Response" doc:id="b7b48343-ac8e-4d49-9d3d-586598905edb" />
@@ -18,17 +18,18 @@ http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/em
 	<sub-flow name="PUTResponse" doc:id="8decd06c-52a8-4cee-b2b1-78fec7e70799" >
 		<set-payload value='#[output application/json --- {"message":"Record updated successfully"}]' doc:name="Response" doc:id="20e45a55-9b1d-4310-9811-9057b7ed3f03" />
 	</sub-flow>
-	<sub-flow name="CreateOrder" doc:id="359a5824-1a0b-4193-9d54-e0f379e76bf2" >
-		<ee:transform doc:name="Transform Message" doc:id="c3b9b501-79ff-4397-8f67-044e80c11df8" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
+	<flow name="CreateOrder" doc:id="7ece0d24-9c05-4e24-905c-6837adb0c1eb" >
+		<set-variable value="#[payload]" doc:name="Set Variable" doc:id="84a047b7-04ef-4455-be53-ad96b1d84fe5" variableName="requestData"/>
+		<http:request method="POST" doc:name="Request" doc:id="ad964a64-8a80-47e4-9c44-4206a92c0d7f" config-ref="HTTP_Request_configuration" path="/payment" >
+			<http:headers ><![CDATA[#[output application/java
 ---
-{}]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-		<flow-ref doc:name="SetOrderId" doc:id="aafd77b4-51a5-4649-bee7-719a737ef5e1" name="SetOrderId"/>
-		<foreach doc:name="For Each" doc:id="574aa79a-db51-456e-973b-c99f8e47d7dc" collection="#[payload.items]">
+{
+	client_secret : attributes.headers.client_id,
+	client_id : attributes.headers.client_secret
+}]]]></http:headers>
+		</http:request>
+		<flow-ref doc:name="SetOrderId" doc:id="aafd77b4-51a5-4649-bee7-719a737ef5e1" name="SetOrderId" targetValue="#[vars.requestData]"/>
+		<foreach doc:name="For Each" doc:id="574aa79a-db51-456e-973b-c99f8e47d7dc" collection="#[vars.payload.items]">
 			<db:insert doc:name="Insert" doc:id="69f2d727-849f-41f6-b568-711f8af5b75b" config-ref="Database_Config1">
 			<db:sql><![CDATA[insert INTO orders (orderId, itemName, price, quantity) 
 values (:orderId,:itemName,:price,:quantity);]]></db:sql>
@@ -39,8 +40,15 @@ quantity :payload.quantity
 }]]]></db:input-parameters>
 		</db:insert>
 		</foreach>
-		<flow-ref doc:name="SetResponse" doc:id="0ef3bce5-7aec-4c5e-a04c-e8cd37561a7a" name="POSTResponse"/>
-	</sub-flow>
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="b2d68aab-3e0e-4275-a81e-1f8d9f771439" type="HTTP:BAD_GATEWAY, HTTP:BAD_REQUEST, HTTP:CLIENT_SECURITY, HTTP:CONNECTIVITY, HTTP:FORBIDDEN, HTTP:INTERNAL_SERVER_ERROR, HTTP:METHOD_NOT_ALLOWED, HTTP:NOT_ACCEPTABLE, HTTP:NOT_FOUND, HTTP:PARSING, HTTP:RETRY_EXHAUSTED, HTTP:SECURITY, HTTP:SERVICE_UNAVAILABLE, HTTP:TIMEOUT, HTTP:TOO_MANY_REQUESTS, HTTP:UNAUTHORIZED, HTTP:UNSUPPORTED_MEDIA_TYPE">
+				<set-payload value='"Error while processing payment"' doc:name="Set Payload" doc:id="b22b2493-61ff-4571-ab46-8498182a0353" />
+			</on-error-propagate>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="2d8cfa92-be39-47cf-97cf-bb4f7303672b" type="DB:BAD_SQL_SYNTAX, DB:CONNECTIVITY, DB:QUERY_EXECUTION, DB:RETRY_EXHAUSTED, EXPRESSION, STREAM_MAXIMUM_SIZE_EXCEEDED">
+				<set-payload value="Error while creating order. Verify data and/or connection." doc:name="Set Payload" doc:id="fc287775-0ecb-4f5b-89a2-a730ced41b63" />
+			</on-error-propagate>
+		</error-handler>
+	</flow>
 	<sub-flow name="UpdateOrder" doc:id="d5342312-8b4c-4858-93d4-9df54edb067f" >
 		<ee:transform doc:name="Transform Message" doc:id="92451f3f-68c9-4726-b5f1-1497b641b1bb">
 			<ee:message>
@@ -50,11 +58,10 @@ output application/json
 payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<flow-ref doc:name="SetOrderId" doc:id="63cd73c3-d9d7-4a49-a6da-40fe14eb4e6a" name="SetOrderId"/>
+		<set-variable value="#[payload.orderId]" doc:name="Set Variable" doc:id="74ba0101-25fd-4e33-8f73-6c2b8fa032eb" variableName="orderId"/>
 		<foreach doc:name="For Each" doc:id="5a7da9bc-aead-473b-a639-99d930009c7f" collection="#[payload.items]">
 			<db:update doc:name="Update" doc:id="e1d45496-fcf2-4222-a2a4-307feae8c79f" config-ref="Database_Config1">
-			<db:sql><![CDATA[update orders set itemName= :itemName, price= :price, 
-quantity= :quantity where orderId= :orderId;]]></db:sql>
+			<db:sql><![CDATA[update orders set quantity= :quantity where orderId= :orderId and itemName= :itemName;]]></db:sql>
 			<db:input-parameters><![CDATA[#[{
 orderId :vars.orderId,
 itemName :payload.itemName,

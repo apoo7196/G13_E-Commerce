@@ -12,7 +12,7 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 	
 	
 	<email:smtp-config name="Email_SMTP" doc:name="Email SMTP" doc:id="385070af-37c6-416f-b62a-4d8a99c96c43" >
-		<email:smtp-connection host="${smtp.host}" port="${smtp.port}" user="${smtp.user}" password="kajal1234@" >
+		<email:smtp-connection host="${smtp.host}" port="${smtp.port}" user="${smtp.user}" password="${smtp.password}" >
 			<email:properties >
 				<email:property key="mail.smtp.starttls.enable" value="true" />
 			</email:properties>
@@ -27,6 +27,10 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 		<db:my-sql-connection host="${db.host}" port="${db.port}" user="${db.user}" password="${db.password}" database="${db.database}" />
 	</db:config>
 	<configuration-properties doc:name="Configuration properties" doc:id="fe2e7ca6-f1d3-4c68-b658-3573565891ce" file="config.yaml" />
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="f1b5a6fd-4e36-471f-a332-7fb852b9271d" basePath="/api" >
+		<http:request-connection host="localhost" port="8081" />
+	</http:request-config>
+	<configuration doc:name="Configuration" doc:id="b2d83aca-815f-4004-99aa-c3ca3a046f17" defaultErrorHandler-ref="globalErrorHandlersError_Handler" />
 	
 	
 	

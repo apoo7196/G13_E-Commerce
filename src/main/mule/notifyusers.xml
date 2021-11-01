@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:email="http://www.mulesoft.org/schema/mule/email"
-	xmlns:db="http://www.mulesoft.org/schema/mule/db"
-	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:email="http://www.mulesoft.org/schema/mule/email"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd 
-http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
-	<flow name="EventAPI" doc:id="d886065c-4f47-483a-8a69-57afc37bffa0" initialState="stopped">
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="EventAPI" doc:id="d886065c-4f47-483a-8a69-57afc37bffa0" initialState="started">
 		<scheduler doc:name="Scheduler" doc:id="e9b292b2-c289-4931-9856-0220daed50b2" >
 			<scheduling-strategy >
-				<fixed-frequency frequency="10" timeUnit="SECONDS"/>
+				<fixed-frequency frequency="1" timeUnit="HOURS"/>
 			</scheduling-strategy>
 		</scheduler>
 		<db:select doc:name="Select" doc:id="704983ae-5f86-4f0f-95ca-fbb129e8526b" config-ref="Database_Config1">
 			<db:sql ><![CDATA[select wishlist.* from wishlist, inventory where 
-wishlist.productName=inventory.productName AND wishlist.price!=inventory.price;
+wishlist.productName=inventory.productName AND (wishlist.price!=inventory.price OR inventory.availableQuantity=0);
 
 
 ]]></db:sql>
@@ -23,24 +24,35 @@ wishlist.productName=inventory.productName AND wishlist.price!=inventory.price;
 		<logger level="INFO" doc:name="Logger" doc:id="57d8937f-d456-4b3e-8693-def9650b8268" />
 		<choice doc:name="Choice" doc:id="d6ab1b3e-4480-4425-9df2-f6921dcb730b" >
 			<when expression="#[sizeOf(payload)&gt;0]">
-				<email:send doc:name="Send" doc:id="55a407ce-d757-4459-a581-5181b319d7a6" config-ref="Email_SMTP" fromAddress="nikithashetty1234@gmail.com" subject="g13_ecommerce notification">
-					<email:to-addresses >
-						<email:to-address value="#[payload.email]" />
-					</email:to-addresses>
-					<email:cc-addresses >
-						<email:cc-address value="apoorvakamerkar7@gmail.com" />
-					</email:cc-addresses>
-					<email:body >
-						<email:content ><![CDATA[#["Hello " ++ payload.username ++ "Product " ++ payload.productName ++ "is now available at " ++ payload.price ++ "quantity(" ++ payload.availableQuantity ++ ")"]]]></email:content>
-					</email:body>
-				</email:send>
+				<foreach doc:name="For Each" doc:id="53b49c4d-9ef6-4611-a78e-3dafbeb702e5" >
+					<flow-ref doc:name="Flow Reference" doc:id="4fa36cd5-5288-4575-82a8-686b1fe8afea" name="sendEmail"/>
+				</foreach>
 			
 </when>
 			<otherwise >
-				<logger level="INFO" doc:name="Logger" doc:id="c004efc0-02e0-4023-aec1-0d9b8338aca6" />
+				<logger level="INFO" doc:name="Logger" doc:id="c004efc0-02e0-4023-aec1-0d9b8338aca6" message="Nothing to notify to any user"/>
 			</otherwise>
 		</choice>
 	
 </flow>
+	<flow name="sendEmail" doc:id="3d1a9579-312b-4964-8d76-d900d3b7e2e1" >
+		<email:send doc:name="Send" doc:id="55a407ce-d757-4459-a581-5181b319d7a6" config-ref="Email_SMTP" fromAddress="apoorvakamerkar7@gmail.com" subject="g13_ecommerce notification">
+					<email:to-addresses>
+						<email:to-address value="#[payload.email]" />
+					</email:to-addresses>
+					<email:cc-addresses>
+						<email:cc-address value="apoorvakamerkar7@gmail.com" />
+					</email:cc-addresses>
+					<email:body contentType="text/plain">
+						<email:content><![CDATA[#["Hello " ++ payload.username as String ++ "Product " ++ payload.productName as String ++ "is now available at " ++ payload.price as String ++ "quantity(" ++ payload.availableQuantity as String ++ ")"]]]></email:content>
+					</email:body>
+				</email:send>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="a1abd6c6-1eab-4cb9-89f4-9d81fa36500b" type="EMAIL:CONNECTIVITY, EMAIL:RETRY_EXHAUSTED, EMAIL:SEND">
+				<logger level="INFO" doc:name="Logger" doc:id="18838f9a-3e79-410f-b020-d4c19aaf6ab5" message='#["Failed to send email to " ++ payload.email]'/>
+			</on-error-continue>
+		</error-handler>
+	</flow>
 	
-	</mule>
+	
+</mule>

@@ -1,0 +1,12 @@
+%dw 2.0
+
+type auto_3d1a9579_312b_4964_8d76_d900d3b7e2e1_Input_Payload = {|
+  username?: String, 
+  productName?: String, 
+  email?: String, 
+  price?: String, 
+  discount?: String, 
+  availableQuantity?: Number, 
+  size?: String
+|}
+
