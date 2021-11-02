@@ -15,6 +15,9 @@
             <SizeBasedTriggeringPolicy size="10 MB"/>
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
+        <SplunkHttp name=”splunk” url=”https://localhost:8088/” token=”bfefb8e4-47be-4da6-91b3-93e81c79c855” index=”main” disableCertificateValidation=”true”>
+        <PatternLayout pattern=”%-5p %d [%t] [event: %X{correlationId}] %c: %m%n” />
+		</SplunkHttp>
     </Appenders>
 
     <Loggers>
@@ -27,6 +30,7 @@
         <AsyncLogger name="org.mule.runtime.core.internal.processor.LoggerMessageProcessor" level="INFO"/>
 
         <AsyncRoot level="INFO">
+        	<AppenderRef ref="Splunk" /> 
             <AppenderRef ref="file"/>
         </AsyncRoot>
     </Loggers>

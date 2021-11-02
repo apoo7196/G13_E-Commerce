@@ -121,20 +121,25 @@ output application/json
         </error-handler>
     </flow>
     <flow name="put:\orders\(orderId):application\json:g13-config">
+		<logger level="INFO" doc:name="Logger" doc:id="fc82320a-6c06-4dd6-b58f-c81bd178f2d2" message='"Updating order"'/>
 		<flow-ref doc:name="Flow Reference" doc:id="b7ac9df5-691e-4658-b3bd-764a4d4281d7" name="UpdateOrder"/>
 		<flow-ref doc:name="Flow Reference" doc:id="d54f55a7-c110-477f-a0a9-1496403ceeb6" name="PUTResponse"/>
     </flow>
     <flow name="put:\users\(username):application\json:g13-config">
+		<logger level="INFO" doc:name="Logger" doc:id="67ac21d7-906e-497d-bbdb-907ee7f44529" message='"Updating user"'/>
 		<flow-ref doc:name="Flow Reference" doc:id="9560c72f-ae9b-4b1d-ba8e-cec1d555644c" name="UpdateUser"/>
 		<flow-ref doc:name="Flow Reference" doc:id="ac3876d8-0a2d-4c1c-bbee-dfd04fbc1f03" name="PUTResponse"/>
     </flow>
     <flow name="delete:\users\(username):g13-config">
+		<logger level="INFO" doc:name="Logger" doc:id="2ec744ec-0280-4a9a-9c02-03582bf6c805" message='"Deleting user"'/>
 		<flow-ref doc:name="Flow Reference" doc:id="a3178957-9295-423f-b4a8-7230300c9b6f" name="DeleteUser"/>
     </flow>
     <flow name="get:\orders\(orderId):g13-config">
+		<logger level="INFO" doc:name="Logger" doc:id="a368d0d6-9387-4c95-92c1-0dca2f376e51" message='"Fetching order"'/>
 		<flow-ref doc:name="Flow Reference" doc:id="240de991-d76c-4565-be4e-d83406d2fe86" name="GetOrder"/>
     </flow>
     <flow name="post:\orders:application\json:g13-config">
+		<logger level="INFO" doc:name="Logger" doc:id="494c4b2b-a175-48da-a5fd-3d833bdd7c61" message='"Creating order"'/>
 		<flow-ref doc:name="CreateOrder" doc:id="2dd450f7-1074-4c84-8cb1-6fe386ecb5e9" name="CreateOrder"/>
 		<flow-ref doc:name="Flow Reference" doc:id="19d2a7a5-55ca-4a1d-88e5-3aa1b4e56be4" name="POSTResponse"/>
     </flow>
@@ -151,6 +156,7 @@ output application/json
         </ee:transform>
     </flow>
     <flow name="post:\users:application\json:g13-config">
+		<logger level="INFO" doc:name="Logger" doc:id="89c5bf76-f8b6-47e9-a0be-3ed521b52eb3" message='"Creating user"'/>
 		<flow-ref doc:name="Flow Reference" doc:id="c91b9eae-7f9f-4935-923b-c30bd32b5f09" name="CreateUser"/>
 		<flow-ref doc:name="Flow Reference" doc:id="58f14971-9dfb-44b3-996b-d61db1215080" name="POSTResponse"/>
     </flow>

@@ -63,18 +63,6 @@
 			<classifier>mule-plugin</classifier>
 		</dependency>
 		<dependency>
-			<groupId>org.mule.connectors</groupId>
-			<artifactId>mule-http-connector</artifactId>
-			<version>1.6.0</version>
-			<classifier>mule-plugin</classifier>
-		</dependency>
-		<dependency>
-			<groupId>org.mule.connectors</groupId>
-			<artifactId>mule-sockets-connector</artifactId>
-			<version>1.2.2</version>
-			<classifier>mule-plugin</classifier>
-		</dependency>
-		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>5.1.48</version>
@@ -103,6 +91,56 @@
 			<version>10.13.0</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
+		<dependency>
+			<groupId>com.splunk.logging</groupId>
+			<artifactId>splunk-library-javalogging</artifactId>
+			<version>1.7.1</version>
+
+		</dependency>
+
+		<dependency>
+
+			<groupId>org.apache.logging.log4j</groupId>
+
+			<artifactId>log4j-core</artifactId>
+
+			<version>2.10.0</version>
+
+		</dependency>
+
+		<dependency>
+
+			<groupId>org.apache.logging.log4j</groupId>
+
+			<artifactId>log4j-api</artifactId>
+
+			<version>2.10.0</version>
+
+		</dependency>
+		<dependency>
+			<groupId>org.mule.connectors</groupId>
+			<artifactId>mule-objectstore-connector</artifactId>
+			<version>1.2.1</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.mulesoft.modules</groupId>
+			<artifactId>mule-oauth2-provider-module</artifactId>
+			<version>1.0.7</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.connectors</groupId>
+			<artifactId>mule-sockets-connector</artifactId>
+			<version>1.1.5</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.connectors</groupId>
+			<artifactId>mule-http-connector</artifactId>
+			<version>1.5.23</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
 	</dependencies>
 
 	<repositories>
@@ -117,6 +155,15 @@
 			<name>MuleSoft Releases Repository</name>
 			<url>https://repository.mulesoft.org/releases/</url>
 			<layout>default</layout>
+		</repository>
+		<repository>
+
+			<id>splunk-artifactory</id>
+
+			<name>Splunk Releases</name>
+
+			<url>https://splunk.jfrog.io/splunk/ext-releases-local</url>
+
 		</repository>
 	</repositories>
 

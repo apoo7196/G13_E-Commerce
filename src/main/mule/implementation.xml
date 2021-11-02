@@ -40,6 +40,7 @@ quantity :payload.quantity
 }]]]></db:input-parameters>
 		</db:insert>
 		</foreach>
+		<logger level="INFO" doc:name="Logger" doc:id="dc66fde5-9412-4972-9d29-1f0822572c00" message='"Order created successfully"'/>
 		<error-handler >
 			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="b2d68aab-3e0e-4275-a81e-1f8d9f771439" type="HTTP:BAD_GATEWAY, HTTP:BAD_REQUEST, HTTP:CLIENT_SECURITY, HTTP:CONNECTIVITY, HTTP:FORBIDDEN, HTTP:INTERNAL_SERVER_ERROR, HTTP:METHOD_NOT_ALLOWED, HTTP:NOT_ACCEPTABLE, HTTP:NOT_FOUND, HTTP:PARSING, HTTP:RETRY_EXHAUSTED, HTTP:SECURITY, HTTP:SERVICE_UNAVAILABLE, HTTP:TIMEOUT, HTTP:TOO_MANY_REQUESTS, HTTP:UNAUTHORIZED, HTTP:UNSUPPORTED_MEDIA_TYPE">
 				<set-payload value='"Error while processing payment"' doc:name="Set Payload" doc:id="b22b2493-61ff-4571-ab46-8498182a0353" />
@@ -70,6 +71,7 @@ quantity :payload.quantity
 }]]]></db:input-parameters>
 		</db:update>
 		</foreach>
+		<logger level="INFO" doc:name="Logger" doc:id="854da9cd-9d23-4e70-a138-bee9fe0e3b4a" message='"OrderUpdated successfully"'/>
 	</sub-flow>
 	<sub-flow name="GetOrder" doc:id="b86b82f3-ec1b-4f3f-9a39-3050b49a03d0" >
 		<db:select doc:name="Select" doc:id="b534b168-4f6c-45c0-b348-7208d00e2404" config-ref="Database_Config1">
@@ -86,6 +88,7 @@ output application/json
 payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="4a68c4b9-01ba-4634-a22e-0cb66b26cf89" message='"Retrieved order"'/>
 	</sub-flow>
 	<sub-flow name="CreateUser" doc:id="39be79a1-27fa-41e0-afb5-d510ff8fa6cb" >
 		<db:insert doc:name="Insert" doc:id="eb5ade1f-fb62-4c05-a797-15088ef3a3f8" config-ref="Database_Config1">
@@ -161,5 +164,6 @@ values (:productName, :price, :discount, :availableQuantity, :size, :username);]
 	username: payload.username
 }]]]></db:input-parameters>
 		</db:insert>
+		<logger level="INFO" doc:name="Logger" doc:id="ca7bd4a3-1e60-4633-9486-bac68252a54b" message='"Added item to wishlist successfully"'/>
 	</sub-flow>
 </mule>

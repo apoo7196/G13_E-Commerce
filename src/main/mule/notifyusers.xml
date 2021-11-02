@@ -21,7 +21,7 @@ wishlist.productName=inventory.productName AND (wishlist.price!=inventory.price 
 
 ]]></db:sql>
 		</db:select>
-		<logger level="INFO" doc:name="Logger" doc:id="57d8937f-d456-4b3e-8693-def9650b8268" />
+		<logger level="INFO" doc:name="Logger" doc:id="57d8937f-d456-4b3e-8693-def9650b8268" message="#[payload]"/>
 		<choice doc:name="Choice" doc:id="d6ab1b3e-4480-4425-9df2-f6921dcb730b" >
 			<when expression="#[sizeOf(payload)&gt;0]">
 				<foreach doc:name="For Each" doc:id="53b49c4d-9ef6-4611-a78e-3dafbeb702e5" >
